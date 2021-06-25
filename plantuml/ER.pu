@@ -1,0 +1,67 @@
+@startuml ER
+
+!define MASTER_MARK_COLOR AAFFAA
+!define TRANSACTION_MARK_COLOR FFAA00
+
+entity "item_categories 商品カテゴリ" as item_categories <<M,MASTER_MARK_COLOR>> {
+    +商品カテゴリID id <tinyint>
+    --
+    ラベル label <varchar(10)>
+}
+entity "items 商品" as items <<M,MASTER_MARK_COLOR>> {
+    +商品ID id <int>
+    --
+    商品名 name <varchar(30)>
+    単価 price <int>
+    #商品カテゴリID category_id <tinyint> [FK]
+}
+
+entity "顧客ランク customer_ranks" as customer_ranks <<M,MASTER_MARK_COLOR>> {
+    +顧客ランクID id <tinyint>
+    --
+    ラベル label <varchar(10)>
+}
+entity "顧客 customers" as customers <<M,MASTER_MARK_COLOR>> {
+    +顧客ID id <int>
+    --
+    氏名 name <varchar(30)>
+    年齢 age <tinyint>
+    #顧客ランクID customer_rank_id <tinyint> [FK]
+}
+
+entity "注文 orders" as orders <<T,TRANSACTION_MARK_COLOR>> {
+    +注文ID id <int>
+    --
+    顧客ID customer_id <int>
+    顧客名 customer_name <varchar(30)>
+    注文日時 order_datetime <datetime>
+    小計税抜 subtotal_price <int>
+    小計消費税 subtotal_sales_tax <int>
+    割引額 discount <int>
+    送料税込 shipping <int>
+    総計税抜 total_price <int>
+    総計消費税 total_sales_tax <int>
+}
+entity "注文明細 order_details" as order_details <<T,TRANSACTION_MARK_COLOR>> {
+    +注文明細ID id <int>
+    --
+    #注文ID order_id <int> [FK]
+    商品ID item_id <int>
+    商品名 item_name <int>
+    商品カテゴリ名 item_category_name
+    単価税抜 unit_price <int>
+    単価消費税 unit_sales_tax <int>
+    数量 quantity <int>
+    注文金額税抜 order_price <int>
+    注文金額消費税 order_sales_tax <int>
+}
+entity "注文採番 order_seq" as order_seq <<T,TRANSACTION_MARK_COLOR>> {
+    +注文ID id <int>
+    --
+}
+
+items }o-d-|| item_categories
+customers }o-d-|| customer_ranks
+orders ||-d-|{ order_details
+
+@enduml
